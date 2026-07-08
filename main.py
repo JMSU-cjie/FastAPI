@@ -1,6 +1,16 @@
-def main():
-    print("Hello from pythonfastapi!")
+from fastapi import FastAPI
+from starlette.responses import HTMLResponse
+
+app = FastAPI()
+@app.get("/")
+def root():
+    return HTMLResponse(content="""
+    <script>
+        window.location.href = '/user/login.html';
+    </script>
+    """)
 
 
 if __name__ == "__main__":
-    main()
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)
