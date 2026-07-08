@@ -29,46 +29,47 @@ class LoginRequest(BaseModel):
     password: str = Field(min_length=1, max_length=11, description="密码")
 
 
-DB_CONFIG = {
-    "host": "127.0.0.1",
-    "port": 3306,
-    "user": "root",
-    "password": "123456",
-    "database": "fastapi",
-    "charset": "utf8"
+TIDB_CONFIG = {
+    "host": "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
+    "port": 4000,
+    "user": "ngp2NDw7ttNrg3T.root",
+    "password": "I9HGgYJjVVEJtfPk",
+    "charset": "utf8mb4"
 }
 
 
-def init_db():
+def init_tidb():
     try:
-        conn = pymysql.connect(
-            host=DB_CONFIG['host'],
-            port=DB_CONFIG['port'],
-            user=DB_CONFIG['user'],
-            password=DB_CONFIG['password'],
-            charset=DB_CONFIG['charset']
-        )
-
+        conn = pymysql.connect(**TIDB_CONFIG)
         c = conn.cursor()
-
-        c.execute(f"CREATE DATABASE IF NOT EXISTS {DB_CONFIG['database']} CHARACTER SET utf8")
+        # 创建数据库
+        c.execute("CREATE DATABASE IF NOT EXISTS fastapi")
         conn.commit()
-
-        conn.select_db(DB_CONFIG['database'])
-
-        c.execute(
-            "create table if not exists sys_user(id int primary key auto_increment, username varchar(255), password varchar(255)"
-        )
+        # 切换到 fastapi
+        conn.select_db("fastapi")
+        # 创建表
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS sys_user (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                username VARCHAR(255),
+                password VARCHAR(255)
+            )
+        """)
         conn.commit()
-
-        c.execute(
-            "create table if not exists product(id int primary key auto_increment, name varchar(20), price float, stock int)")
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS product (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(20),
+                price FLOAT,
+                stock INT
+            )
+        """)
         conn.commit()
-
         c.close()
         conn.close()
+        print("TiDB 数据库初始化成功！")
     except Exception as e:
-        print(f"初始化数据库异常，异常信息: {e}")
+        print(f"初始化失败: {e}")
 
 
 # ===== 新增：登录验证接口 =====
@@ -209,7 +210,7 @@ def goods_page():
 
 
 if __name__ == '__main__':
-    init_db()
+    init_tidb()  # 替换原来的 init_db()
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8080)
