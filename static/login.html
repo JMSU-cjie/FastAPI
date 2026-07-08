@@ -402,7 +402,10 @@
         (function() {
             "use strict";
 
-            const API_BASE = 'http://localhost:8080';
+            // ============================================================
+            // 修改为相对路径（空字符串），自动适配当前域名
+            // ============================================================
+            const API_BASE = '';
 
             const loginForm = document.getElementById('loginForm');
             const usernameInput = document.getElementById('username');
@@ -449,7 +452,7 @@
             function checkLoginStatus() {
                 const token = sessionStorage.getItem('auth_token') || localStorage.getItem('auth_token');
                 if (token) {
-                    window.location.href = '/user/goods.html';
+                    window.location.href = '/static/goods.html';
                 }
             }
 
@@ -469,7 +472,8 @@
                 loginBtn.disabled = true;
 
                 try {
-                    const response = await fetch(`${API_BASE}/auth/login`, {
+                    // 使用相对路径
+                    const response = await fetch(API_BASE + '/auth/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -491,7 +495,7 @@
                         showToast('✅ 登录成功！正在跳转...', 'success', 1500);
 
                         setTimeout(() => {
-                            window.location.href = '/user/goods.html';
+                            window.location.href = '/static/goods.html';
                         }, 1500);
                     } else {
                         showError(data.detail || '用户名或密码错误');
@@ -547,7 +551,7 @@
             usernameInput.focus();
 
             console.log('🔐 登录页面已加载');
-            console.log('📝 数据库验证模式');
+            console.log('📝 使用相对路径请求 API');
         })();
     </script>
 
