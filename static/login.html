@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新启典学苑 · 登录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            padding: 3rem 2.5rem;
+            max-width: 420px;
+            width: 100%;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header .logo {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 0.3rem;
+        }
+
+        .login-header p {
+            color: #7a7a9a;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-group .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .form-group .input-wrapper:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        /* 左侧图标 */
+        .form-group .input-wrapper .input-icon {
+            position: absolute;
+            left: 14px;
+            color: #a0aec0;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .form-group .input-wrapper:focus-within .input-icon {
+            color: #667eea;
+        }
+
+        /* 输入框 */
+        .form-group .input-wrapper input {
+            width: 100%;
+            padding: 0.8rem 3.2rem 0.8rem 2.8rem;
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+            outline: none;
+            color: #2d3748;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group .input-wrapper input::placeholder {
+            color: #a0aec0;
+        }
+
+        /* ===== 禁用浏览器自带的密码眼睛 ===== */
+        .form-group .input-wrapper input[type="password"]::-ms-reveal,
+        .form-group .input-wrapper input[type="password"]::-ms-clear {
+            display: none;
+        }
+
+        .form-group .input-wrapper input[type="password"]::-webkit-credentials-auto-fill-button {
+            display: none !important;
+        }
+
+        .form-group .input-wrapper input[type="password"]::-webkit-textfield-decoration-container {
+            display: none;
+        }
+
+        /* 右侧自定义眼睛按钮 */
+        .form-group .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            line-height: 1;
+        }
+
+        .form-group .toggle-password:hover {
+            color: #667eea;
+        }
+
+        .form-group .toggle-password:focus {
+            outline: none;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-options label {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #4a5568;
+            cursor: pointer;
+        }
+
+        .form-options label input[type="checkbox"] {
+            margin-right: 0.5rem;
+            width: 16px;
+            height: 16px;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+
+        .form-options a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .form-options a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .login-btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .login-btn.loading .spinner {
+            display: inline-block;
+        }
+
+        .login-btn.loading .btn-text {
+            display: none;
+        }
+
+        .error-message {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 10px;
+            padding: 0.7rem 1rem;
+            color: #c53030;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        .error-message i {
+            font-size: 1.1rem;
+        }
+
+        /* Toast 提示 */
+        .toast-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #1e3b4e;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 999;
+            max-width: 350px;
+        }
+
+        .toast-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-message.error {
+            background: #c53030;
+        }
+
+        .toast-message.success {
+            background: #2f855a;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+            .form-options {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="toast-message"></div>
+
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">
+                <i class="fas fa-store"></i>
+            </div>
+            <h1>新启典学苑</h1>
+            <p>商品管理系统 · 登录</p>
+        </div>
+
+        <!-- 错误信息 -->
+        <div id="errorMessage" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorText">用户名或密码错误</span>
+        </div>
+
+        <form id="loginForm" onsubmit="return false;">
+            <!-- 用户名 -->
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user input-icon"></i>
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="请输入用户名"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+            </div>
+
+            <!-- 密码 -->
+            <div class="form-group">
+                <label for="password">密码</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="请输入密码"
+                        required
+                        autocomplete="current-password"
+                    >
+                    <!-- 右侧自定义眼睛按钮 -->
+                    <button type="button" class="toggle-password" id="togglePassword" title="显示/隐藏密码">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <label>
+                    <input type="checkbox" id="rememberMe" checked>
+                    记住我
+                </label>
+                <a href="#" onclick="alert('请联系管理员重置密码')">忘记密码？</a>
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                <span class="spinner"></span>
+                <span class="btn-text"><i class="fas fa-sign-in-alt"></i> 登 录</span>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            const API_BASE = 'http://localhost:8080';
+
+            const loginForm = document.getElementById('loginForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const rememberMe = document.getElementById('rememberMe');
+            const toast = document.getElementById('toast');
+
+            let toastTimer = null;
+
+            function showToast(message, type = 'success', duration = 3000) {
+                toast.textContent = message;
+                toast.className = 'toast-message ' + type;
+                toast.classList.add('show');
+
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+
+            function showError(message) {
+                errorText.textContent = message;
+                errorMessage.classList.add('show');
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                }, 3000);
+            }
+
+            function hideError() {
+                errorMessage.classList.remove('show');
+            }
+
+            // 切换密码显示/隐藏
+            togglePasswordBtn.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            });
+
+            function checkLoginStatus() {
+                const token = sessionStorage.getItem('auth_token') || localStorage.getItem('auth_token');
+                if (token) {
+                    window.location.href = '/user/goods.html';
+                }
+            }
+
+            async function handleLogin(event) {
+                event.preventDefault();
+                hideError();
+
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                if (!username || !password) {
+                    showError('请输入用户名和密码');
+                    return;
+                }
+
+                loginBtn.classList.add('loading');
+                loginBtn.disabled = true;
+
+                try {
+                    const response = await fetch(`${API_BASE}/auth/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        if (rememberMe.checked) {
+                            localStorage.setItem('auth_token', 'token_' + Date.now());
+                            localStorage.setItem('username', username);
+                        } else {
+                            sessionStorage.setItem('auth_token', 'token_' + Date.now());
+                            sessionStorage.setItem('username', username);
+                        }
+
+                        showToast('✅ 登录成功！正在跳转...', 'success', 1500);
+
+                        setTimeout(() => {
+                            window.location.href = '/user/goods.html';
+                        }, 1500);
+                    } else {
+                        showError(data.detail || '用户名或密码错误');
+                        loginBtn.classList.remove('loading');
+                        loginBtn.disabled = false;
+                        showToast('❌ 登录失败', 'error');
+                        passwordInput.value = '';
+                        passwordInput.focus();
+                    }
+                } catch (error) {
+                    console.error('登录异常:', error);
+                    showError('服务器连接失败，请稍后重试');
+                    loginBtn.classList.remove('loading');
+                    loginBtn.disabled = false;
+                }
+            }
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    const activeElement = document.activeElement;
+                    if (activeElement === usernameInput || activeElement === passwordInput) {
+                        handleLogin(event);
+                    }
+                }
+            });
+
+            usernameInput.addEventListener('input', hideError);
+            passwordInput.addEventListener('input', hideError);
+
+            loginForm.addEventListener('submit', handleLogin);
+
+            const savedUsername = localStorage.getItem('saved_username');
+            if (savedUsername) {
+                usernameInput.value = savedUsername;
+                rememberMe.checked = true;
+            }
+
+            rememberMe.addEventListener('change', function() {
+                if (!this.checked) {
+                    localStorage.removeItem('saved_username');
+                } else {
+                    localStorage.setItem('saved_username', usernameInput.value);
+                }
+            });
+
+            usernameInput.addEventListener('change', function() {
+                if (rememberMe.checked && this.value.trim()) {
+                    localStorage.setItem('saved_username', this.value.trim());
+                }
+            });
+
+            checkLoginStatus();
+            usernameInput.focus();
+
+            console.log('🔐 登录页面已加载');
+            console.log('📝 数据库验证模式');
+        })();
+    </script>
+
+</body>
+</html>

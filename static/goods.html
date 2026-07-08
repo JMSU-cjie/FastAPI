@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新启典学苑 · 商品管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .card {
+            max-width: 1200px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px -12px rgba(0, 20, 30, 0.25);
+            padding: 2rem 2rem 2.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #0b2b3c;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header h1 small {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #4a6f84;
+            margin-left: 0.5rem;
+            background: #eaf0f6;
+            padding: 0.1rem 0.9rem;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #1d3b4f;
+            background: #eaf0f6;
+            padding: 0.3rem 1rem 0.3rem 0.8rem;
+            border-radius: 40px;
+        }
+
+        .user-info i {
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid #d9e2ec;
+            color: #1f4057;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn:hover {
+            background: #fef0f0;
+            border-color: #e5baba;
+            color: #b13e3e;
+        }
+
+        .logout-btn i {
+            font-size: 0.85rem;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4caf50;
+            margin-right: 6px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem 1rem;
+            margin-bottom: 1.8rem;
+            background: #f8fafc;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            flex: 1 1 260px;
+            background: white;
+            border-radius: 40px;
+            padding: 0.1rem 0.1rem 0.1rem 1.2rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            border: 1px solid #e2e9f2;
+            transition: border 0.2s;
+        }
+
+        .search-box:focus-within {
+            border-color: #2d7aff;
+            box-shadow: 0 0 0 3px rgba(45, 122, 255, 0.15);
+        }
+
+        .search-box i {
+            color: #7b95aa;
+            font-size: 0.95rem;
+        }
+
+        .search-box input {
+            border: none;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.95rem;
+            width: 100%;
+            background: transparent;
+            outline: none;
+            color: #1a3142;
+        }
+
+        .search-box input::placeholder {
+            color: #a5bccf;
+            font-weight: 400;
+        }
+
+        .search-box button {
+            background: #2d7aff;
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1.4rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-box button:hover {
+            background: #1b5fd9;
+        }
+
+        .action-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .action-btn {
+            background: white;
+            border: 1px solid #d9e2ec;
+            color: #1f4057;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            background: #ffffff;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .action-btn i {
+            font-size: 0.9rem;
+            color: #3b6f8f;
+        }
+
+        .action-btn:hover {
+            background: #f0f5fe;
+            border-color: #a8c4e6;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px -6px rgba(0, 60, 120, 0.12);
+        }
+
+        .action-btn.primary {
+            background: #0b2b3c;
+            border-color: #0b2b3c;
+            color: white;
+        }
+
+        .action-btn.primary i {
+            color: #b3d9ff;
+        }
+
+        .action-btn.primary:hover {
+            background: #143e55;
+            border-color: #143e55;
+        }
+
+        .action-btn.danger {
+            color: #b13e3e;
+            border-color: #f0d5d5;
+        }
+
+        .action-btn.danger i {
+            color: #b13e3e;
+        }
+
+        .action-btn.danger:hover {
+            background: #fef0f0;
+            border-color: #e5baba;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            border: 1px solid #ecf1f7;
+            background: #ffffff;
+            margin-top: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            min-width: 480px;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem 1.2rem;
+            background: #f8fafc;
+            color: #1d3b4f;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2eaf2;
+        }
+
+        td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #edf2f8;
+            color: #16313f;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #f9fcff;
+        }
+
+        tr.selected td {
+            background: #e3edfb;
+        }
+
+        .col-checkbox {
+            width: 40px;
+            text-align: center;
+        }
+
+        .col-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .col-id {
+            font-weight: 500;
+            color: #2d5c7a;
+            width: 70px;
+        }
+
+        .col-name {
+            font-weight: 500;
+        }
+
+        .col-price {
+            font-weight: 500;
+            color: #0f3d52;
+        }
+
+        .col-stock {
+            font-weight: 500;
+        }
+
+        .empty-row td {
+            padding: 3rem 1rem;
+            text-align: center;
+            color: #7999b0;
+            font-style: italic;
+        }
+
+        .footer-meta {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 1.2rem;
+            font-size: 0.85rem;
+            color: #4f738b;
+            padding: 0 0.2rem;
+        }
+
+        .badge {
+            background: #e8f0f8;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            color: #1d4d67;
+        }
+
+        /* ===== Toast 消息 ===== */
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e3b4e;
+            color: white;
+            padding: 0.7rem 1.8rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .toast-message.show {
+            opacity: 1;
+        }
+
+        .toast-message.error {
+            background: #c53030;
+        }
+
+        .toast-message.success {
+            background: #2f855a;
+        }
+
+        /* ===== 确认对话框 ===== */
+        .confirm-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .confirm-overlay.active {
+            display: flex;
+        }
+
+        .confirm-box {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem 2.5rem;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            text-align: center;
+        }
+
+        .confirm-box .icon {
+            font-size: 3rem;
+            color: #e53e3e;
+            margin-bottom: 1rem;
+        }
+
+        .confirm-box h3 {
+            font-size: 1.2rem;
+            color: #1a1a2e;
+            margin-bottom: 0.5rem;
+        }
+
+        .confirm-box p {
+            color: #4a5568;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .confirm-box .buttons {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+
+        .confirm-box .buttons button {
+            padding: 0.6rem 2rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .confirm-box .buttons .btn-cancel {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .confirm-box .buttons .btn-cancel:hover {
+            background: #edf2f7;
+        }
+
+        .confirm-box .buttons .btn-confirm {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .confirm-box .buttons .btn-confirm:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(229, 62, 62, 0.3);
+        }
+
+        /* ===== 弹窗样式 ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem 2.5rem;
+            max-width: 560px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-batch {
+            max-width: 700px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-header h2 i {
+            color: #667eea;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #a0aec0;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .modal-close:hover {
+            color: #c53030;
+            background: #fff5f5;
+        }
+
+        .modal-body .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .modal-body label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.3rem;
+        }
+
+        .modal-body label .required {
+            color: #e53e3e;
+            margin-left: 2px;
+        }
+
+        .modal-body input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+            outline: none;
+            color: #2d3748;
+        }
+
+        .modal-body input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .modal-body input::placeholder {
+            color: #a0aec0;
+        }
+
+        .batch-item {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid #667eea;
+        }
+
+        .batch-item .product-name-label {
+            font-weight: 600;
+            color: #1a1a2e;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .batch-item .product-name-label i {
+            color: #667eea;
+        }
+
+        .batch-item .form-group {
+            margin-bottom: 0.8rem;
+        }
+
+        .batch-item .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .batch-item label {
+            font-size: 0.8rem;
+            color: #4a5568;
+        }
+
+        .batch-item input {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .batch-header {
+            background: #edf2f7;
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.2rem;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .batch-header i {
+            color: #667eea;
+            margin-right: 0.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .modal-btn {
+            padding: 0.6rem 1.8rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .modal-btn.cancel {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+
+        .modal-btn.cancel:hover {
+            background: #edf2f7;
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-btn.confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .modal-btn.confirm:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        @media (max-width: 700px) {
+            .card { padding: 1.5rem 1rem; }
+            .toolbar { border-radius: 28px; flex-direction: column; align-items: stretch; }
+            .search-box { flex: 1 1 auto; }
+            .action-group { margin-left: 0; justify-content: flex-start; flex-wrap: wrap; }
+            .action-btn { padding: 0.4rem 1rem; }
+            .header h1 { font-size: 1.5rem; }
+            .header-right { width: 100%; justify-content: flex-end; }
+            .modal { padding: 1.5rem; }
+            .batch-item { padding: 1rem; }
+            .modal-batch { max-width: 100%; }
+            .confirm-box { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="toast-message">📦 操作成功</div>
+
+    <!-- ===== 自定义确认对话框 ===== -->
+    <div class="confirm-overlay" id="confirmOverlay">
+        <div class="confirm-box">
+            <div class="icon">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <h3>确认操作</h3>
+            <p>您确定要执行此操作吗？</p>
+            <div class="buttons">
+                <button class="btn-cancel" id="confirmCancel">取消</button>
+                <button class="btn-confirm" id="confirmOk">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 弹窗 ===== -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal" id="modalContent">
+            <div class="modal-header">
+                <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> 新增商品</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 动态内容由 JS 生成 -->
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" id="cancelModal">取消</button>
+                <button class="modal-btn confirm" id="confirmModal">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主页面 -->
+    <div class="card">
+        <div class="header">
+            <h1>
+                <i class="fas fa-boxes" style="color: #1d5c7a;"></i> 新启典学苑
+                <small>商品管理</small>
+            </h1>
+            <div class="header-right">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="usernameDisplay">用户</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> 退出
+                </button>
+                <span style="font-size:0.9rem; background:#ecf3f9; padding:0.2rem 1.2rem; border-radius:40px; color:#1d5775;">
+                    <span class="status-dot"></span> FastAPI
+                </span>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="输入商品ID搜索" value="">
+                <button id="searchBtn"><i class="fas fa-arrow-right"></i> 搜索</button>
+            </div>
+            <div class="action-group">
+                <button class="action-btn primary" id="addBtn"><i class="fas fa-plus-circle"></i> 新增商品</button>
+                <button class="action-btn" id="editBtn"><i class="fas fa-pen"></i> 修改选中</button>
+                <button class="action-btn danger" id="deleteBtn"><i class="fas fa-trash-alt"></i> 删除选中</button>
+                <button class="action-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> 刷新全部</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th class="col-checkbox"><input type="checkbox" id="selectAll"></th>
+                        <th class="col-id">ID</th>
+                        <th class="col-name">商品名称</th>
+                        <th class="col-price">商品价格</th>
+                        <th class="col-stock">库存数量</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr class="empty-row">
+                        <td colspan="5"><i class="fas fa-spinner fa-pulse" style="margin-right:8px;"></i> 从数据库加载中 ...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer-meta">
+            <span class="badge" id="rowCount">共 0 项</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // ============================================================
+            // 1. 登录验证和退出功能
+            // ============================================================
+
+            function checkAuth() {
+                const token = sessionStorage.getItem('auth_token') || localStorage.getItem('auth_token');
+                const username = sessionStorage.getItem('username') || localStorage.getItem('username');
+
+                if (!token) {
+                    showToast('⚠️ 请先登录', 'error', 1500);
+                    setTimeout(() => {
+                        window.location.href = '/user/login.html';
+                    }, 1500);
+                    return false;
+                }
+
+                const usernameDisplay = document.getElementById('usernameDisplay');
+                if (usernameDisplay && username) {
+                    usernameDisplay.textContent = username;
+                }
+
+                return true;
+            }
+
+            // ============================================================
+            // 2. 自定义确认对话框
+            // ============================================================
+
+            const confirmOverlay = document.getElementById('confirmOverlay');
+            let confirmCallback = null;
+
+            function showConfirm(title, message, confirmText, onConfirm) {
+                document.querySelector('.confirm-box h3').textContent = title || '确认操作';
+                document.querySelector('.confirm-box p').textContent = message || '您确定要执行此操作吗？';
+                document.getElementById('confirmOk').textContent = confirmText || '确定';
+                confirmCallback = onConfirm;
+                confirmOverlay.classList.add('active');
+            }
+
+            function hideConfirm() {
+                confirmOverlay.classList.remove('active');
+                confirmCallback = null;
+            }
+
+            document.getElementById('confirmCancel').addEventListener('click', hideConfirm);
+            document.getElementById('confirmOk').addEventListener('click', function() {
+                if (confirmCallback) {
+                    confirmCallback();
+                }
+                hideConfirm();
+            });
+
+            // 点击外部关闭确认框
+            confirmOverlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    hideConfirm();
+                }
+            });
+
+            // ESC 关闭确认框
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && confirmOverlay.classList.contains('active')) {
+                    hideConfirm();
+                }
+            });
+
+            // ---------- 退出登录 ----------
+            function logout() {
+                showConfirm('确认退出登录', '您确定要退出当前账号吗？', '确定退出', function() {
+                    sessionStorage.clear();
+                    localStorage.removeItem('auth_token');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('saved_username');
+
+                    showToast('👋 已安全退出', 'success', 1500);
+                    setTimeout(() => {
+                        window.location.href = '/user/login.html';
+                    }, 1500);
+                });
+            }
+
+            // ============================================================
+            // 3. Toast 提示
+            // ============================================================
+
+            function showToast(msg, type = 'success', duration = 1800) {
+                const toastEl = document.getElementById('toast');
+                toastEl.textContent = msg;
+                toastEl.className = 'toast-message ' + type;
+                toastEl.classList.add('show');
+                clearTimeout(window._toastTimer);
+                window._toastTimer = setTimeout(() => {
+                    toastEl.classList.remove('show');
+                }, duration);
+            }
+
+            // ============================================================
+            // 4. 弹窗控制
+            // ============================================================
+
+            const productModal = document.getElementById('productModal');
+            const modalContent = document.getElementById('modalContent');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const confirmModalBtn = document.getElementById('confirmModal');
+            const cancelModalBtn = document.getElementById('cancelModal');
+            const closeModalBtn = document.getElementById('closeModal');
+
+            let modalMode = 'add';
+            let editingProducts = [];
+
+            function generateProductForm(product, index) {
+                const nameId = `batch_name_${index}`;
+                const priceId = `batch_price_${index}`;
+                const stockId = `batch_stock_${index}`;
+                return `
+                    <div class="batch-item">
+                        <div class="product-name-label">
+                            <i class="fas fa-box"></i> ${product.name}
+                        </div>
+                        <div class="form-group">
+                            <label for="${nameId}">商品名称 <span class="required">*</span></label>
+                            <input type="text" id="${nameId}" value="${product.name}" placeholder="请输入商品名称（1-10个字符）" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="${priceId}">商品价格 <span class="required">*</span></label>
+                            <input type="number" id="${priceId}" value="${product.price}" placeholder="请输入商品价格（大于0）" step="0.01" min="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="${stockId}">库存数量 <span class="required">*</span></label>
+                            <input type="number" id="${stockId}" value="${product.stock}" placeholder="请输入库存数量（大于等于0）" step="1" min="0">
+                        </div>
+                    </div>
+                `;
+            }
+
+            function openModal(mode, products = null) {
+                modalMode = mode;
+                modalBody.innerHTML = '';
+
+                if (mode === 'add') {
+                    modalTitle.innerHTML = '<i class="fas fa-plus-circle"></i> 新增商品';
+                    confirmModalBtn.textContent = '确认添加';
+                    modalContent.classList.remove('modal-batch');
+
+                    modalBody.innerHTML = `
+                        <div class="form-group">
+                            <label>商品名称 <span class="required">*</span></label>
+                            <input type="text" id="modalName" placeholder="请输入商品名称（1-10个字符）" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label>商品价格 <span class="required">*</span></label>
+                            <input type="number" id="modalPrice" placeholder="请输入商品价格（大于0）" step="0.01" min="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>库存数量 <span class="required">*</span></label>
+                            <input type="number" id="modalStock" placeholder="请输入库存数量（大于等于0）" step="1" min="0">
+                        </div>
+                    `;
+                    editingProducts = [];
+
+                } else if (mode === 'edit' && products && products.length > 0) {
+                    editingProducts = products;
+
+                    if (products.length === 1) {
+                        modalTitle.innerHTML = '<i class="fas fa-pen"></i> 修改商品';
+                        confirmModalBtn.textContent = '确认修改';
+                        modalContent.classList.remove('modal-batch');
+
+                        const p = products[0];
+                        modalBody.innerHTML = `
+                            <div class="batch-header">
+                                <i class="fas fa-edit"></i> 正在修改商品：<strong>${p.name}</strong>
+                            </div>
+                            <div class="form-group">
+                                <label>商品名称 <span class="required">*</span></label>
+                                <input type="text" id="modalName" value="${p.name}" placeholder="请输入商品名称（1-10个字符）" maxlength="10">
+                            </div>
+                            <div class="form-group">
+                                <label>商品价格 <span class="required">*</span></label>
+                                <input type="number" id="modalPrice" value="${p.price}" placeholder="请输入商品价格（大于0）" step="0.01" min="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>库存数量 <span class="required">*</span></label>
+                                <input type="number" id="modalStock" value="${p.stock}" placeholder="请输入库存数量（大于等于0）" step="1" min="0">
+                            </div>
+                        `;
+                    } else {
+                        modalTitle.innerHTML = `<i class="fas fa-pen"></i> 批量修改商品 (${products.length}个)`;
+                        confirmModalBtn.textContent = '确认修改';
+                        modalContent.classList.add('modal-batch');
+
+                        let html = `
+                            <div class="batch-header">
+                                <i class="fas fa-info-circle"></i> 正在批量修改 <strong>${products.length}</strong> 个商品，请分别填写每个商品的新信息
+                            </div>
+                        `;
+                        products.forEach((p, index) => {
+                            html += generateProductForm(p, index);
+                        });
+                        modalBody.innerHTML = html;
+                    }
+                }
+
+                productModal.classList.add('active');
+
+                setTimeout(() => {
+                    const firstInput = modalBody.querySelector('input');
+                    if (firstInput) firstInput.focus();
+                }, 100);
+            }
+
+            function closeModal() {
+                productModal.classList.remove('active');
+                editingProducts = [];
+            }
+
+            productModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+
+            cancelModalBtn.addEventListener('click', closeModal);
+            closeModalBtn.addEventListener('click', closeModal);
+
+            // ============================================================
+            // 5. FastAPI 接口地址
+            // ============================================================
+
+            const API_BASE = 'http://localhost:8080';
+
+            const tbody = document.getElementById('tableBody');
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const addBtn = document.getElementById('addBtn');
+            const editBtn = document.getElementById('editBtn');
+            const deleteBtn = document.getElementById('deleteBtn');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const rowCountSpan = document.getElementById('rowCount');
+            const selectAllCheckbox = document.getElementById('selectAll');
+
+            let allProducts = [];
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const map = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+            }
+
+            function getSelectedIds() {
+                const checkboxes = document.querySelectorAll('#tableBody .row-checkbox:checked');
+                return Array.from(checkboxes).map(cb => parseInt(cb.dataset.id));
+            }
+
+            function getSelectedProducts() {
+                const ids = getSelectedIds();
+                return allProducts.filter(p => ids.includes(p.id));
+            }
+
+            // ---------- API 调用 ----------
+            async function apiRequest(url, options = {}) {
+                try {
+                    const response = await fetch(url, {
+                        ...options,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(options.headers || {})
+                        }
+                    });
+
+                    if (!response.ok) {
+                        let errorMsg = `请求失败 (${response.status})`;
+                        try {
+                            const errorData = await response.json();
+                            if (errorData.detail) {
+                                errorMsg = errorData.detail;
+                            }
+                        } catch (e) {}
+                        throw new Error(errorMsg);
+                    }
+
+                    if (options.method === 'DELETE') {
+                        return { success: true };
+                    }
+
+                    const result = await response.json();
+                    return result;
+                } catch (error) {
+                    showToast('❌ ' + error.message, 'error');
+                    throw error;
+                }
+            }
+
+            async function loadAllProducts() {
+                try {
+                    const products = await apiRequest(`${API_BASE}/product/getall`);
+                    allProducts = products || [];
+                    return allProducts;
+                } catch (error) {
+                    allProducts = [];
+                    return [];
+                }
+            }
+
+            async function getProductById(id) {
+                try {
+                    const product = await apiRequest(`${API_BASE}/product/get/${id}`);
+                    return product;
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            async function addProduct(data) {
+                const result = await apiRequest(`${API_BASE}/product/add`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                return result;
+            }
+
+            async function updateProduct(id, data) {
+                const result = await apiRequest(`${API_BASE}/product/put/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(data)
+                });
+                return result;
+            }
+
+            async function deleteProduct(id) {
+                await apiRequest(`${API_BASE}/product/delete/${id}`, {
+                    method: 'DELETE'
+                });
+                return true;
+            }
+
+            // ---------- 渲染表格 ----------
+            function renderTable(products) {
+                if (!products || products.length === 0) {
+                    tbody.innerHTML = `<tr class="empty-row"><td colspan="5"><i class="fas fa-inbox"></i> 暂无商品数据</td></tr>`;
+                    rowCountSpan.textContent = '共 0 项';
+                    selectAllCheckbox.checked = false;
+                    return;
+                }
+
+                let html = '';
+                products.forEach(p => {
+                    html += `
+                        <tr data-id="${p.id}">
+                            <td class="col-checkbox">
+                                <input type="checkbox" class="row-checkbox" data-id="${p.id}">
+                            </td>
+                            <td class="col-id">${p.id}</td>
+                            <td class="col-name"><i class="fas fa-tag" style="color:#3b7a9e;margin-right:8px;opacity:0.7;"></i>${escapeHtml(p.name)}</td>
+                            <td class="col-price">¥${Number(p.price).toFixed(2)}</td>
+                            <td class="col-stock">${p.stock}</td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+                rowCountSpan.textContent = `共 ${products.length} 项`;
+
+                selectAllCheckbox.checked = false;
+
+                document.querySelectorAll('#tableBody tr').forEach(tr => {
+                    const checkbox = tr.querySelector('.row-checkbox');
+                    if (checkbox) {
+                        tr.addEventListener('click', function(e) {
+                            if (e.target.tagName !== 'INPUT') {
+                                checkbox.checked = !checkbox.checked;
+                                checkbox.dispatchEvent(new Event('change'));
+                            }
+                        });
+                        checkbox.addEventListener('change', function(e) {
+                            e.stopPropagation();
+                            updateSelectAllState();
+                        });
+                    }
+                });
+            }
+
+            function updateSelectAllState() {
+                const checkboxes = document.querySelectorAll('#tableBody .row-checkbox');
+                const checked = document.querySelectorAll('#tableBody .row-checkbox:checked');
+                selectAllCheckbox.checked = checkboxes.length > 0 && checked.length === checkboxes.length;
+            }
+
+            selectAllCheckbox.addEventListener('change', function() {
+                document.querySelectorAll('#tableBody .row-checkbox').forEach(cb => {
+                    cb.checked = this.checked;
+                });
+            });
+
+            // ---------- 刷新数据 ----------
+            async function refreshData(searchKeyword = '') {
+                try {
+                    tbody.innerHTML = `<tr class="empty-row"><td colspan="5"><i class="fas fa-spinner fa-pulse"></i> 加载中 ...</td></tr>`;
+
+                    const products = await loadAllProducts();
+
+                    let filteredProducts = products;
+                    if (searchKeyword && searchKeyword.trim()) {
+                        const keyword = searchKeyword.trim();
+                        if (/^\d+$/.test(keyword)) {
+                            const id = parseInt(keyword);
+                            filteredProducts = products.filter(p => p.id === id);
+                        } else {
+                            filteredProducts = products.filter(p =>
+                                p.name.toLowerCase().includes(keyword.toLowerCase())
+                            );
+                        }
+                    }
+
+                    renderTable(filteredProducts);
+                } catch (error) {
+                    tbody.innerHTML = `<tr class="empty-row"><td colspan="5"><i class="fas fa-exclamation-triangle"></i> 加载失败，请刷新</td></tr>`;
+                }
+            }
+
+            // ---------- 搜索 ----------
+            function handleSearch() {
+                const keyword = searchInput.value.trim();
+                refreshData(keyword);
+            }
+
+            // ---------- 新增商品 ----------
+            function handleAdd() {
+                openModal('add');
+            }
+
+            // ---------- 确认新增/修改 ----------
+            async function handleConfirmModal() {
+                let successCount = 0;
+                let errorCount = 0;
+                let productNames = [];
+
+                confirmModalBtn.disabled = true;
+                const originalText = confirmModalBtn.textContent;
+                confirmModalBtn.textContent = '处理中...';
+
+                try {
+                    if (modalMode === 'add') {
+                        const nameInput = document.getElementById('modalName');
+                        const priceInput = document.getElementById('modalPrice');
+                        const stockInput = document.getElementById('modalStock');
+
+                        const name = nameInput ? nameInput.value.trim() : '';
+                        const price = priceInput ? parseFloat(priceInput.value) : NaN;
+                        const stock = stockInput ? parseInt(stockInput.value) : NaN;
+
+                        if (!name || name.length > 10) {
+                            showToast('⚠️ 商品名称长度为1-10个字符', 'error');
+                            confirmModalBtn.disabled = false;
+                            confirmModalBtn.textContent = originalText;
+                            if (nameInput) nameInput.focus();
+                            return;
+                        }
+
+                        if (isNaN(price) || price <= 0) {
+                            showToast('⚠️ 请输入有效的价格（大于0）', 'error');
+                            confirmModalBtn.disabled = false;
+                            confirmModalBtn.textContent = originalText;
+                            if (priceInput) priceInput.focus();
+                            return;
+                        }
+
+                        if (isNaN(stock) || stock < 0) {
+                            showToast('⚠️ 请输入有效的库存数量（大于等于0）', 'error');
+                            confirmModalBtn.disabled = false;
+                            confirmModalBtn.textContent = originalText;
+                            if (stockInput) stockInput.focus();
+                            return;
+                        }
+
+                        const result = await addProduct({ name, price, stock });
+                        showToast(`✅ 已新增商品 “${name}”`, 'success');
+                        successCount = 1;
+
+                    } else if (modalMode === 'edit') {
+                        if (editingProducts.length === 1) {
+                            const nameInput = document.getElementById('modalName');
+                            const priceInput = document.getElementById('modalPrice');
+                            const stockInput = document.getElementById('modalStock');
+
+                            const name = nameInput ? nameInput.value.trim() : '';
+                            const price = priceInput ? parseFloat(priceInput.value) : NaN;
+                            const stock = stockInput ? parseInt(stockInput.value) : NaN;
+
+                            if (!name || name.length > 10) {
+                                showToast('⚠️ 商品名称长度为1-10个字符', 'error');
+                                confirmModalBtn.disabled = false;
+                                confirmModalBtn.textContent = originalText;
+                                if (nameInput) nameInput.focus();
+                                return;
+                            }
+
+                            if (isNaN(price) || price <= 0) {
+                                showToast('⚠️ 请输入有效的价格（大于0）', 'error');
+                                confirmModalBtn.disabled = false;
+                                confirmModalBtn.textContent = originalText;
+                                if (priceInput) priceInput.focus();
+                                return;
+                            }
+
+                            if (isNaN(stock) || stock < 0) {
+                                showToast('⚠️ 请输入有效的库存数量（大于等于0）', 'error');
+                                confirmModalBtn.disabled = false;
+                                confirmModalBtn.textContent = originalText;
+                                if (stockInput) stockInput.focus();
+                                return;
+                            }
+
+                            const id = editingProducts[0].id;
+                            await updateProduct(id, { name, price, stock });
+                            productNames.push(name);
+                            successCount = 1;
+
+                        } else {
+                            const updates = [];
+                            let hasError = false;
+
+                            editingProducts.forEach((p, index) => {
+                                const nameInput = document.getElementById(`batch_name_${index}`);
+                                const priceInput = document.getElementById(`batch_price_${index}`);
+                                const stockInput = document.getElementById(`batch_stock_${index}`);
+
+                                const name = nameInput ? nameInput.value.trim() : '';
+                                const price = priceInput ? parseFloat(priceInput.value) : NaN;
+                                const stock = stockInput ? parseInt(stockInput.value) : NaN;
+
+                                if (!name || name.length > 10) {
+                                    showToast(`⚠️ “${p.name}” 的名称长度为1-10个字符`, 'error');
+                                    hasError = true;
+                                    if (nameInput) nameInput.focus();
+                                    return;
+                                }
+
+                                if (isNaN(price) || price <= 0) {
+                                    showToast(`⚠️ “${p.name}” 的价格必须大于0`, 'error');
+                                    hasError = true;
+                                    if (priceInput) priceInput.focus();
+                                    return;
+                                }
+
+                                if (isNaN(stock) || stock < 0) {
+                                    showToast(`⚠️ “${p.name}” 的库存数量必须大于等于0`, 'error');
+                                    hasError = true;
+                                    if (stockInput) stockInput.focus();
+                                    return;
+                                }
+
+                                updates.push({ id: p.id, name, price, stock });
+                                productNames.push(name);
+                            });
+
+                            if (hasError) {
+                                confirmModalBtn.disabled = false;
+                                confirmModalBtn.textContent = originalText;
+                                return;
+                            }
+
+                            for (const item of updates) {
+                                try {
+                                    await updateProduct(item.id, {
+                                        name: item.name,
+                                        price: item.price,
+                                        stock: item.stock
+                                    });
+                                    successCount++;
+                                } catch (e) {
+                                    errorCount++;
+                                }
+                            }
+                        }
+                    }
+
+                    if (modalMode === 'edit') {
+                        if (successCount === 1 && productNames.length === 1) {
+                            showToast(`✏️ 已修改商品 “${productNames[0]}”`, 'success');
+                        } else if (successCount > 1) {
+                            showToast(`✏️ 已修改 ${successCount} 个商品`, 'success');
+                        } else if (errorCount > 0 && successCount > 0) {
+                            showToast(`⚠️ 部分修改成功 (${successCount} 成功, ${errorCount} 失败)`, 'error');
+                        }
+                    }
+
+                    closeModal();
+                    searchInput.value = '';
+                    await refreshData();
+                } catch (error) {
+                    // 错误已在 apiRequest 中处理
+                } finally {
+                    confirmModalBtn.disabled = false;
+                    confirmModalBtn.textContent = originalText;
+                }
+            }
+
+            // ---------- 修改商品 ----------
+            async function handleEdit() {
+                const selectedIds = getSelectedIds();
+                if (selectedIds.length === 0) {
+                    showToast('⚠️ 请先勾选要修改的商品', 'error');
+                    return;
+                }
+
+                const selectedProducts = allProducts.filter(p => selectedIds.includes(p.id));
+                openModal('edit', selectedProducts);
+            }
+
+            // ---------- 删除商品 ----------
+            async function handleDelete() {
+                const selectedIds = getSelectedIds();
+                if (selectedIds.length === 0) {
+                    showToast('⚠️ 请先勾选要删除的商品', 'error');
+                    return;
+                }
+
+                const selectedProducts = allProducts.filter(p => selectedIds.includes(p.id));
+                const names = selectedProducts.map(p => p.name).join('、');
+
+                showConfirm('确认删除', `确定要删除商品 “${names}” 吗？`, '确定删除', async function() {
+                    try {
+                        for (const id of selectedIds) {
+                            await deleteProduct(id);
+                        }
+                        showToast(`🗑️ 已删除 ${selectedIds.length} 个商品`, 'success');
+                        searchInput.value = '';
+                        await refreshData();
+                    } catch (error) {
+                        // 错误已在 apiRequest 中处理
+                    }
+                });
+            }
+
+            // ---------- 回车键提交 ----------
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && productModal.classList.contains('active')) {
+                    const activeElement = document.activeElement;
+                    if (activeElement && activeElement.tagName === 'INPUT') {
+                        e.preventDefault();
+                        confirmModalBtn.click();
+                    }
+                }
+            });
+
+            // ---------- 初始化 ----------
+            function init() {
+                if (!checkAuth()) return;
+
+                document.getElementById('logoutBtn').addEventListener('click', logout);
+
+                addBtn.addEventListener('click', handleAdd);
+                confirmModalBtn.addEventListener('click', handleConfirmModal);
+
+                searchBtn.addEventListener('click', handleSearch);
+                searchInput.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') {
+                        handleSearch();
+                    }
+                });
+
+                editBtn.addEventListener('click', handleEdit);
+                deleteBtn.addEventListener('click', handleDelete);
+                refreshBtn.addEventListener('click', () => {
+                    searchInput.value = '';
+                    refreshData();
+                    showToast('🔄 已刷新全部数据', 'success');
+                });
+
+                refreshData();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+
+</body>
+</html>
