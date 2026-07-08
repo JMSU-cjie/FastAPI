@@ -833,7 +833,7 @@
                 if (!token) {
                     showToast('⚠️ 请先登录', 'error', 1500);
                     setTimeout(() => {
-                        window.location.href = '/user/login.html';
+                        window.location.href = '/static/login.html';
                     }, 1500);
                     return false;
                 }
@@ -898,7 +898,7 @@
 
                     showToast('👋 已安全退出', 'success', 1500);
                     setTimeout(() => {
-                        window.location.href = '/user/login.html';
+                        window.location.href = '/static/login.html';
                     }, 1500);
                 });
             }
@@ -1049,10 +1049,11 @@
             closeModalBtn.addEventListener('click', closeModal);
 
             // ============================================================
-            // 5. FastAPI 接口地址
+            // 5. FastAPI 接口地址（修改为相对路径）
             // ============================================================
 
-            const API_BASE = 'http://localhost:8080';
+            // 使用相对路径，自动适配当前域名（本地或 Vercel）
+            const API_BASE = '';
 
             const tbody = document.getElementById('tableBody');
             const searchInput = document.getElementById('searchInput');
@@ -1091,7 +1092,8 @@
             // ---------- API 调用 ----------
             async function apiRequest(url, options = {}) {
                 try {
-                    const response = await fetch(url, {
+                    const fullUrl = API_BASE + url;
+                    const response = await fetch(fullUrl, {
                         ...options,
                         headers: {
                             'Content-Type': 'application/json',
@@ -1124,7 +1126,7 @@
 
             async function loadAllProducts() {
                 try {
-                    const products = await apiRequest(`${API_BASE}/product/getall`);
+                    const products = await apiRequest('/product/getall');
                     allProducts = products || [];
                     return allProducts;
                 } catch (error) {
@@ -1135,7 +1137,7 @@
 
             async function getProductById(id) {
                 try {
-                    const product = await apiRequest(`${API_BASE}/product/get/${id}`);
+                    const product = await apiRequest(`/product/get/${id}`);
                     return product;
                 } catch (error) {
                     return null;
@@ -1143,7 +1145,7 @@
             }
 
             async function addProduct(data) {
-                const result = await apiRequest(`${API_BASE}/product/add`, {
+                const result = await apiRequest('/product/add', {
                     method: 'POST',
                     body: JSON.stringify(data)
                 });
@@ -1151,7 +1153,7 @@
             }
 
             async function updateProduct(id, data) {
-                const result = await apiRequest(`${API_BASE}/product/put/${id}`, {
+                const result = await apiRequest(`/product/put/${id}`, {
                     method: 'PUT',
                     body: JSON.stringify(data)
                 });
@@ -1159,7 +1161,7 @@
             }
 
             async function deleteProduct(id) {
-                await apiRequest(`${API_BASE}/product/delete/${id}`, {
+                await apiRequest(`/product/delete/${id}`, {
                     method: 'DELETE'
                 });
                 return true;
