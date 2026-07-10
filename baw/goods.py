@@ -390,15 +390,6 @@ def goods_page():
         )
 
 
-@app.get("/")
-def root():
-    return HTMLResponse(content="""
-    <script>
-        window.location.href = '/user/login.html';
-    </script>
-    """)
-
-
 @app.get("/user/login.html", response_class=HTMLResponse)
 def login_page():
     try:
