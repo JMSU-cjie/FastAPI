@@ -11,7 +11,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+env_path = os.path.join(base_dir, '.env')
+if os.path.exists(env_path):
+    load_dotenv(env_path)
+
+BASE_DIR = base_dir
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 
 app = FastAPI(title="点餐系统")
@@ -55,19 +60,29 @@ class ResetPasswordRequest(BaseModel):
     new_password: str = Field(min_length=1, max_length=11, description="新密码")
 
 
+tidb_host = os.getenv("TIDB_HOST")
+tidb_port = os.getenv("TIDB_PORT")
+tidb_user = os.getenv("TIDB_USER")
+tidb_password = os.getenv("TIDB_PASSWORD")
+tidb_database = os.getenv("TIDB_DATABASE")
+
+if not all([tidb_host, tidb_port, tidb_user, tidb_password, tidb_database]):
+    missing = []
+    if not tidb_host: missing.append("TIDB_HOST")
+    if not tidb_port: missing.append("TIDB_PORT")
+    if not tidb_user: missing.append("TIDB_USER")
+    if not tidb_password: missing.append("TIDB_PASSWORD")
+    if not tidb_database: missing.append("TIDB_DATABASE")
+    raise EnvironmentError(f"缺少必需的环境变量: {', '.join(missing)}。请在 .env 文件或 Vercel 环境变量中配置。")
+
 DB_CONFIG = {
-    "host": os.getenv("TIDB_HOST"),
-    "port": int(os.getenv("TIDB_PORT")),
-    "user": os.getenv("TIDB_USER"),
-    "password": os.getenv("TIDB_PASSWORD"),
-    "database": os.getenv("TIDB_DATABASE"),
+    "host": tidb_host,
+    "port": int(tidb_port),
+    "user": tidb_user,
+    "password": tidb_password,
+    "database": tidb_database,
     "charset": "utf8"
 }
-
-required_env_vars = ["TIDB_HOST", "TIDB_PORT", "TIDB_USER", "TIDB_PASSWORD", "TIDB_DATABASE"]
-missing_vars = [var for var in required_env_vars if not os.getenv(var)]
-if missing_vars:
-    raise EnvironmentError(f"缺少必需的环境变量: {', '.join(missing_vars)}。请检查 .env 文件或环境变量配置。")
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
