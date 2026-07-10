@@ -57,12 +57,17 @@ class ResetPasswordRequest(BaseModel):
 
 DB_CONFIG = {
     "host": os.getenv("TIDB_HOST"),
-    "port": os.getenv("TIDB_PORT"),
+    "port": int(os.getenv("TIDB_PORT")),
     "user": os.getenv("TIDB_USER"),
     "password": os.getenv("TIDB_PASSWORD"),
     "database": os.getenv("TIDB_DATABASE"),
     "charset": "utf8"
 }
+
+required_env_vars = ["TIDB_HOST", "TIDB_PORT", "TIDB_USER", "TIDB_PASSWORD", "TIDB_DATABASE"]
+missing_vars = [var for var in required_env_vars if not os.getenv(var)]
+if missing_vars:
+    raise EnvironmentError(f"缺少必需的环境变量: {', '.join(missing_vars)}。请检查 .env 文件或环境变量配置。")
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -124,6 +129,13 @@ def init_db():
             "CREATE TABLE IF NOT EXISTS sys_user(id INT PRIMARY KEY AUTO_INCREMENT, username VARCHAR(255), phone VARCHAR(20), password VARCHAR(255))"
         )
         conn.commit()
+
+        try:
+            c.execute("ALTER TABLE sys_user ADD COLUMN phone VARCHAR(20)")
+            conn.commit()
+            print("已为 sys_user 表添加 phone 字段")
+        except Exception:
+            pass
 
         c.execute(
             "CREATE TABLE IF NOT EXISTS product(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(20), price FLOAT, stock INT)")
