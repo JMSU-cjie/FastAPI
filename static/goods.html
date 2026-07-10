@@ -1049,11 +1049,17 @@
             closeModalBtn.addEventListener('click', closeModal);
 
             // ============================================================
-            // 5. FastAPI 接口地址（修改为相对路径）
+            // 5. FastAPI 接口地址（根据部署环境选择）
             // ============================================================
 
-            // 使用相对路径，自动适配当前域名（本地或 Vercel）
-            const API_BASE = '';
+            // 本地开发（前后端都在本地，默认端口 8080）
+            const API_BASE = 'http://localhost:8080';
+
+            // 如果部署到 Vercel（前后端同一个项目），注释掉上面，取消注释下面这行
+            // const API_BASE = '';
+
+            // 如果前后端分开部署（前端在 Vercel，后端在其他服务器）
+            // const API_BASE = 'https://your-backend-domain.com';
 
             const tbody = document.getElementById('tableBody');
             const searchInput = document.getElementById('searchInput');
@@ -1089,17 +1095,40 @@
                 return allProducts.filter(p => ids.includes(p.id));
             }
 
+            // ---------- 获取 token ----------
+            function getToken() {
+                let token = localStorage.getItem('auth_token');
+                if (!token) {
+                    token = sessionStorage.getItem('auth_token');
+                }
+                return token;
+            }
+
             // ---------- API 调用 ----------
             async function apiRequest(url, options = {}) {
                 try {
+                    const token = getToken();
                     const fullUrl = API_BASE + url;
+
                     const response = await fetch(fullUrl, {
                         ...options,
                         headers: {
                             'Content-Type': 'application/json',
+                            ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
                             ...(options.headers || {})
                         }
                     });
+
+                    // 如果返回 401，跳转到登录页
+                    if (response.status === 401) {
+                        localStorage.removeItem('auth_token');
+                        sessionStorage.removeItem('auth_token');
+                        showToast('⚠️ 登录已过期，请重新登录', 'error', 1500);
+                        setTimeout(() => {
+                            window.location.href = '/static/login.html';
+                        }, 1500);
+                        throw new Error('未授权');
+                    }
 
                     if (!response.ok) {
                         let errorMsg = `请求失败 (${response.status})`;
@@ -1119,7 +1148,9 @@
                     const result = await response.json();
                     return result;
                 } catch (error) {
-                    showToast('❌ ' + error.message, 'error');
+                    if (error.message !== '未授权') {
+                        showToast('❌ ' + error.message, 'error');
+                    }
                     throw error;
                 }
             }
