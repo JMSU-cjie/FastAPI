@@ -823,7 +823,7 @@
             function checkLoginStatus() {
                 const token = sessionStorage.getItem('auth_token') || localStorage.getItem('auth_token');
                 if (token && isTokenValid(token)) {
-                    window.location.href = '/user/goods.html';
+                    window.location.href = '/static/goods.html';
                 } else {
                     sessionStorage.removeItem('auth_token');
                     localStorage.removeItem('auth_token');
@@ -871,7 +871,7 @@
                         showToast('登录成功！正在跳转...', 'success', 1500);
 
                         setTimeout(() => {
-                            window.location.href = '/user/goods.html';
+                            window.location.href = '/static/goods.html';
                         }, 1500);
                     } else {
                         showError(data.detail || '用户名或密码错误');
