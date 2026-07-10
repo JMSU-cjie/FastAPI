@@ -4,9 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field
 from starlette.responses import HTMLResponse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from jose import jwt
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
@@ -53,11 +56,11 @@ class ResetPasswordRequest(BaseModel):
 
 
 DB_CONFIG = {
-    "host": "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
-    "port": 4000,
-    "user": "ngp2NDw7ttNrg3T.root",
-    "password": "I9HGgYJjVVEJtfPk",
-    "database": "fastapi",
+    "host": os.getenv("TIDB_HOST", "gateway01.ap-northeast-1.prod.aws.tidbcloud.com"),
+    "port": int(os.getenv("TIDB_PORT", "4000")),
+    "user": os.getenv("TIDB_USER", "ngp2NDw7ttNrg3T.root"),
+    "password": os.getenv("TIDB_PASSWORD", "I9HGgYJjVVEJtfPk"),
+    "database": os.getenv("TIDB_DATABASE", "fastapi"),
     "charset": "utf8"
 }
 
@@ -65,9 +68,9 @@ DB_CONFIG = {
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.now(UTC) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
