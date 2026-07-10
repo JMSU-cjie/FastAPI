@@ -1,14 +1,14 @@
-from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
+import os
 
-# 关键：从 goods.py 导入包含所有 API 路由的 app
-from baw.goods import app
+from baw.goods import app, init_db
 
-# 挂载静态文件目录
-app.mount("/static", StaticFiles(directory="static"), name="static")
+init_db()
 
-# 根路径重定向到登录页
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+
 @app.get("/")
 def root():
     return RedirectResponse(url="/static/login.html")
