@@ -760,7 +760,12 @@
         (function() {
             "use strict";
 
-            const API_BASE = 'http://localhost:8080';
+            // ============================================================
+            // 使用相对路径 - 自动适配当前域名（本地或服务器）
+            // 本地开发：访问 http://localhost:8080 时，API 请求发到 localhost:8080
+            // 服务器部署：访问 https://your-domain.com 时，API 请求发到 your-domain.com
+            // ============================================================
+            const API_BASE = '';  // 空字符串表示使用当前页面的域名
             const SESSION_TIMEOUT = 30 * 60 * 1000;
 
             const loginForm = document.getElementById('loginForm');
