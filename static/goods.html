@@ -1049,17 +1049,11 @@
             closeModalBtn.addEventListener('click', closeModal);
 
             // ============================================================
-            // 5. FastAPI 接口地址（根据部署环境选择）
+            // 5. FastAPI 接口地址（使用相对路径）
+            // 本地开发：访问 http://localhost:8080 时，API 请求发到 localhost:8080
+            // 服务器部署：访问 https://your-domain.com 时，API 请求发到 your-domain.com
             // ============================================================
-
-            // 本地开发（前后端都在本地，默认端口 8080）
-            const API_BASE = 'http://localhost:8080';
-
-            // 如果部署到 Vercel（前后端同一个项目），注释掉上面，取消注释下面这行
-            // const API_BASE = '';
-
-            // 如果前后端分开部署（前端在 Vercel，后端在其他服务器）
-            // const API_BASE = 'https://your-backend-domain.com';
+            const API_BASE = '';  // 空字符串表示使用当前页面的域名
 
             const tbody = document.getElementById('tableBody');
             const searchInput = document.getElementById('searchInput');
