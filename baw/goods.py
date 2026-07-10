@@ -56,11 +56,11 @@ class ResetPasswordRequest(BaseModel):
 
 
 DB_CONFIG = {
-    "host": os.getenv("TIDB_HOST", "gateway01.ap-northeast-1.prod.aws.tidbcloud.com"),
-    "port": int(os.getenv("TIDB_PORT", "4000")),
-    "user": os.getenv("TIDB_USER", "ngp2NDw7ttNrg3T.root"),
-    "password": os.getenv("TIDB_PASSWORD", "I9HGgYJjVVEJtfPk"),
-    "database": os.getenv("TIDB_DATABASE", "fastapi"),
+    "host": os.getenv("TIDB_HOST"),
+    "port": os.getenv("TIDB_PORT"),
+    "user": os.getenv("TIDB_USER"),
+    "password": os.getenv("TIDB_PASSWORD"),
+    "database": os.getenv("TIDB_DATABASE"),
     "charset": "utf8"
 }
 
