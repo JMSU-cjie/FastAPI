@@ -405,6 +405,149 @@
             border-color: #10b981;
         }
 
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #2d2d4a;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .register-link a {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .register-link a:hover {
+            color: #a78bfa;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #0f0f1a;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid #2d2d4a;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: #ffffff;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .modal-header h2 i {
+            color: #8b5cf6;
+            margin-right: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .modal-close:hover {
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+            padding-top: 1rem;
+            border-top: 1px solid #2d2d4a;
+        }
+
+        .modal-btn {
+            padding: 0.65rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .modal-btn.cancel {
+            background: #1a1a2e;
+            color: #9ca3af;
+            border: 1px solid #2d2d4a;
+        }
+
+        .modal-btn.cancel:hover {
+            background: #2d2d4a;
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            color: white;
+        }
+
+        .modal-btn.confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .modal-btn.confirm:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
         @media (max-width: 480px) {
             .login-card {
                 padding: 2rem 1.5rem;
@@ -416,6 +559,9 @@
                 flex-direction: column;
                 gap: 0.8rem;
                 align-items: flex-start;
+            }
+            .modal {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -478,15 +624,134 @@
                             <input type="checkbox" id="rememberMe" checked>
                             记住我
                         </label>
-                        <a href="#" onclick="alert('请联系管理员重置密码'); return false;">忘记密码？</a>
+                        <a href="#" id="forgotPasswordLink">忘记密码？</a>
                     </div>
 
                     <button type="submit" class="login-btn" id="loginBtn">
                         <span class="spinner"></span>
                         <span class="btn-text"><i class="fas fa-sign-in-alt"></i> 登 录</span>
                     </button>
+
+                    <div class="register-link">
+                        <span>还没有账号？</span>
+                        <a href="#" id="registerLink">立即注册</a>
+                    </div>
                 </form>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- 注册弹窗 -->
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal" id="registerModalContent">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> 用户注册</h2>
+                <button class="modal-close" id="closeRegisterBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="registerError" class="error-message" style="margin-bottom: 1rem;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="registerErrorText">错误信息</span>
+                </div>
+                <div class="form-group">
+                    <label for="regUsername">用户名</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input
+                            type="text"
+                            id="regUsername"
+                            placeholder="请输入用户名（3-10个字符）"
+                            maxlength="10"
+                        >
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regPhone">手机号</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-phone input-icon"></i>
+                        <input
+                            type="tel"
+                            id="regPhone"
+                            placeholder="请输入11位手机号"
+                            maxlength="11"
+                        >
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">密码</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input
+                            type="password"
+                            id="regPassword"
+                            placeholder="请输入密码"
+                            maxlength="11"
+                        >
+                        <button type="button" class="toggle-password" id="toggleRegPassword" title="显示/隐藏密码">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" onclick="closeRegisterModal()">取消</button>
+                <button class="modal-btn confirm" id="registerBtn">
+                    <span class="spinner"></span>
+                    <span class="btn-text">注 册</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 忘记密码弹窗 -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal" id="forgotModalContent">
+            <div class="modal-header">
+                <h2><i class="fas fa-key"></i> 忘记密码</h2>
+                <button class="modal-close" id="closeForgotBtn">&times;</button>
+            </div>
+            <div class="modal-body" id="forgotModalBody">
+                <div id="forgotError" class="error-message" style="margin-bottom: 1rem;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="forgotErrorText">错误信息</span>
+                </div>
+                <div class="form-group">
+                    <label for="forgotPhone">手机号</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-phone input-icon"></i>
+                        <input
+                            type="tel"
+                            id="forgotPhone"
+                            placeholder="请输入注册时的手机号"
+                            maxlength="11"
+                        >
+                    </div>
+                </div>
+                <div id="newPasswordSection" style="display: none;">
+                    <div class="form-group">
+                        <label for="newPassword">新密码</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input
+                                type="password"
+                                id="newPassword"
+                                placeholder="请输入新密码"
+                                maxlength="11"
+                            >
+                            <button type="button" class="toggle-password" id="toggleNewPassword" title="显示/隐藏密码">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" onclick="closeForgotPasswordModal()">取消</button>
+                <button class="modal-btn confirm" id="forgotBtn">
+                    <span class="spinner"></span>
+                    <span class="btn-text">验 证</span>
+                </button>
             </div>
         </div>
     </div>
@@ -663,6 +928,280 @@
 
             console.log('🍜 点餐系统登录页面已加载');
             console.log('⏱️  会话超时时间：30分钟');
+
+            // ===== 注册功能 =====
+            const registerModal = document.getElementById('registerModal');
+            const registerBtn = document.getElementById('registerBtn');
+            const closeRegisterBtn = document.getElementById('closeRegisterBtn');
+            const registerLink = document.getElementById('registerLink');
+            const regUsernameInput = document.getElementById('regUsername');
+            const regPhoneInput = document.getElementById('regPhone');
+            const regPasswordInput = document.getElementById('regPassword');
+            const registerError = document.getElementById('registerError');
+            const registerErrorText = document.getElementById('registerErrorText');
+            const toggleRegPasswordBtn = document.getElementById('toggleRegPassword');
+
+            function showRegisterModal() {
+                registerModal.classList.add('active');
+                registerError.classList.remove('show');
+                regUsernameInput.value = '';
+                regPhoneInput.value = '';
+                regPasswordInput.value = '';
+                regUsernameInput.focus();
+            }
+
+            function closeRegisterModal() {
+                registerModal.classList.remove('active');
+            }
+
+            registerLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showRegisterModal();
+            });
+
+            closeRegisterBtn.addEventListener('click', closeRegisterModal);
+
+            function showRegisterError(message) {
+                registerErrorText.textContent = message;
+                registerError.classList.add('show');
+                setTimeout(() => {
+                    registerError.classList.remove('show');
+                }, 4000);
+            }
+
+            toggleRegPasswordBtn.addEventListener('click', function() {
+                const type = regPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                regPasswordInput.setAttribute('type', type);
+                this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            });
+
+            async function handleRegister() {
+                const username = regUsernameInput.value.trim();
+                const phone = regPhoneInput.value.trim();
+                const password = regPasswordInput.value.trim();
+
+                if (!username) {
+                    showRegisterError('请输入用户名');
+                    regUsernameInput.focus();
+                    return;
+                }
+                if (username.length < 3 || username.length > 10) {
+                    showRegisterError('用户名长度必须在3-10个字符之间');
+                    regUsernameInput.focus();
+                    return;
+                }
+                if (!phone) {
+                    showRegisterError('请输入手机号');
+                    regPhoneInput.focus();
+                    return;
+                }
+                if (!/^1[3-9]\d{9}$/.test(phone)) {
+                    showRegisterError('请输入有效的11位手机号');
+                    regPhoneInput.focus();
+                    return;
+                }
+                if (!password) {
+                    showRegisterError('请输入密码');
+                    regPasswordInput.focus();
+                    return;
+                }
+
+                registerBtn.classList.add('loading');
+                registerBtn.disabled = true;
+
+                try {
+                    const response = await fetch(`${API_BASE}/auth/register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, phone, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        showToast('注册成功！请登录', 'success', 2000);
+                        closeRegisterModal();
+                        usernameInput.value = username;
+                        passwordInput.value = '';
+                        passwordInput.focus();
+                    } else {
+                        showRegisterError(data.detail || '注册失败');
+                    }
+                } catch (error) {
+                    console.error('注册异常:', error);
+                    showRegisterError('服务器连接失败，请稍后重试');
+                } finally {
+                    registerBtn.classList.remove('loading');
+                    registerBtn.disabled = false;
+                }
+            }
+
+            registerBtn.addEventListener('click', handleRegister);
+
+            // ===== 忘记密码功能 =====
+            const forgotModal = document.getElementById('forgotModal');
+            const forgotBtn = document.getElementById('forgotBtn');
+            const closeForgotBtn = document.getElementById('closeForgotBtn');
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            const forgotPhoneInput = document.getElementById('forgotPhone');
+            const newPasswordInput = document.getElementById('newPassword');
+            const forgotError = document.getElementById('forgotError');
+            const forgotErrorText = document.getElementById('forgotErrorText');
+            const newPasswordSection = document.getElementById('newPasswordSection');
+            const toggleNewPasswordBtn = document.getElementById('toggleNewPassword');
+            let forgotStep = 1;
+
+            function showForgotPasswordModal() {
+                forgotModal.classList.add('active');
+                forgotError.classList.remove('show');
+                forgotPhoneInput.value = '';
+                newPasswordInput.value = '';
+                newPasswordSection.style.display = 'none';
+                forgotBtn.querySelector('.btn-text').textContent = '验 证';
+                forgotBtn.classList.remove('loading');
+                forgotBtn.disabled = false;
+                forgotStep = 1;
+                forgotPhoneInput.focus();
+            }
+
+            function closeForgotPasswordModal() {
+                forgotModal.classList.remove('active');
+                forgotStep = 1;
+            }
+
+            forgotPasswordLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showForgotPasswordModal();
+            });
+
+            closeForgotBtn.addEventListener('click', closeForgotPasswordModal);
+
+            function showForgotError(message) {
+                forgotErrorText.textContent = message;
+                forgotError.classList.add('show');
+                setTimeout(() => {
+                    forgotError.classList.remove('show');
+                }, 4000);
+            }
+
+            toggleNewPasswordBtn.addEventListener('click', function() {
+                const type = newPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                newPasswordInput.setAttribute('type', type);
+                this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            });
+
+            async function handleForgotPassword() {
+                if (forgotStep === 1) {
+                    const phone = forgotPhoneInput.value.trim();
+                    if (!phone) {
+                        showForgotError('请输入手机号');
+                        forgotPhoneInput.focus();
+                        return;
+                    }
+                    if (!/^1[3-9]\d{9}$/.test(phone)) {
+                        showForgotError('请输入有效的11位手机号');
+                        forgotPhoneInput.focus();
+                        return;
+                    }
+
+                    forgotBtn.classList.add('loading');
+                    forgotBtn.disabled = true;
+
+                    try {
+                        const response = await fetch(`${API_BASE}/auth/reset_password`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ phone, new_password: '' })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.status === 404) {
+                            showForgotError('该手机号未注册');
+                            forgotBtn.classList.remove('loading');
+                            forgotBtn.disabled = false;
+                        } else if (response.ok) {
+                            forgotStep = 2;
+                            newPasswordSection.style.display = 'block';
+                            forgotBtn.querySelector('.btn-text').textContent = '确 定';
+                            forgotBtn.classList.remove('loading');
+                            forgotBtn.disabled = false;
+                            newPasswordInput.focus();
+                            showToast('验证成功，请设置新密码', 'success');
+                        } else {
+                            showForgotError(data.detail || '验证失败');
+                            forgotBtn.classList.remove('loading');
+                            forgotBtn.disabled = false;
+                        }
+                    } catch (error) {
+                        console.error('验证异常:', error);
+                        showForgotError('服务器连接失败，请稍后重试');
+                        forgotBtn.classList.remove('loading');
+                        forgotBtn.disabled = false;
+                    }
+                } else if (forgotStep === 2) {
+                    const phone = forgotPhoneInput.value.trim();
+                    const newPassword = newPasswordInput.value.trim();
+
+                    if (!newPassword) {
+                        showForgotError('请输入新密码');
+                        newPasswordInput.focus();
+                        return;
+                    }
+
+                    forgotBtn.classList.add('loading');
+                    forgotBtn.disabled = true;
+
+                    try {
+                        const response = await fetch(`${API_BASE}/auth/reset_password`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ phone, new_password: newPassword })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
+                            showToast('密码修改成功，请登录', 'success', 2000);
+                            closeForgotPasswordModal();
+                            usernameInput.value = data.user.username;
+                            passwordInput.value = '';
+                            passwordInput.focus();
+                        } else {
+                            showForgotError(data.detail || '密码修改失败');
+                        }
+                    } catch (error) {
+                        console.error('密码修改异常:', error);
+                        showForgotError('服务器连接失败，请稍后重试');
+                    } finally {
+                        forgotBtn.classList.remove('loading');
+                        forgotBtn.disabled = false;
+                    }
+                }
+            }
+
+            forgotBtn.addEventListener('click', handleForgotPassword);
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    const activeElement = document.activeElement;
+                    if (registerModal.classList.contains('active')) {
+                        if (activeElement === regUsernameInput || activeElement === regPhoneInput || activeElement === regPasswordInput) {
+                            handleRegister();
+                        }
+                    } else if (forgotModal.classList.contains('active')) {
+                        if (activeElement === forgotPhoneInput || activeElement === newPasswordInput) {
+                            handleForgotPassword();
+                        }
+                    }
+                }
+            });
         })();
     </script>
 </body>
