@@ -16,6 +16,9 @@ from dotenv import load_dotenv
 if not os.getenv("VERCEL"):
     load_dotenv()
 
+print(f"📌 Vercel 环境: {bool(os.getenv('VERCEL'))}")
+print(f"📌 TIDB_HOST: {os.getenv('TIDB_HOST', '未设置')}")
+
 app = FastAPI(title="点餐系统")
 
 # ===== CORS 中间件 =====
@@ -429,6 +432,14 @@ def delete_product(id: int):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"删除商品失败: {str(e)}")
+
+# ============================================================
+# 打印所有已注册路由（调试用）
+# ============================================================
+print("📋 已注册的路由:")
+for route in app.routes:
+    methods = ", ".join(route.methods) if hasattr(route, 'methods') else "ANY"
+    print(f"  {methods} {route.path}")
 
 # ============================================================
 # 本地运行
