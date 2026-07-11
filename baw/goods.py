@@ -56,14 +56,6 @@ tidb_user = os.getenv("TIDB_USER")
 tidb_password = os.getenv("TIDB_PASSWORD")
 tidb_database = os.getenv("TIDB_DATABASE")
 
-if not all([tidb_host, tidb_port, tidb_user, tidb_password, tidb_database]):
-    print("警告: 部分环境变量未设置，尝试使用默认值...")
-    tidb_host = tidb_host or "gateway01.ap-northeast-1.prod.aws.tidbcloud.com"
-    tidb_port = tidb_port or "4000"
-    tidb_user = tidb_user or "ngp2NDw7ttNrg3T.root"
-    tidb_password = tidb_password or "I9HGgYJjVVEJtfPk"
-    tidb_database = tidb_database or "fastapi"
-
 DB_CONFIG = {
     "host": tidb_host,
     "port": int(tidb_port),
