@@ -9,6 +9,10 @@ import pymysql
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import Optional
+from dotenv import load_dotenv
+
+# ============ 加载环境变量 ============
+load_dotenv()  # 从 .env 文件加载环境变量
 
 # ============ 创建路由器 ============
 router = APIRouter()
@@ -38,9 +42,9 @@ class Product(BaseModel):
 def get_db_config():
     """从环境变量获取数据库配置"""
     return {
-        "host": os.getenv("TIDB_HOST", "gateway01.ap-northeast-1.prod.aws.tidbcloud.com"),
+        "host": os.getenv("TIDB_HOST", "localhost"),
         "port": int(os.getenv("TIDB_PORT", 4000)),
-        "user": os.getenv("TIDB_USER", "ngp2NDw7ttNrg3T.root"),
+        "user": os.getenv("TIDB_USER", "root"),
         "password": os.getenv("TIDB_PASSWORD", ""),
         "database": os.getenv("TIDB_DATABASE", "fastapi"),
         "charset": "utf8mb4"
@@ -81,7 +85,7 @@ def init_database():
         """)
         conn.commit()
         
-        # 插入测试数据
+        # 插入测试数据（仅当表为空时）
         c.execute("SELECT COUNT(*) FROM sys_user")
         count = c.fetchone()[0]
         if count == 0:
