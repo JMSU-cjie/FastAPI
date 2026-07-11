@@ -9,10 +9,6 @@ import pymysql
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import Optional
-from dotenv import load_dotenv
-
-# ============ 加载环境变量 ============
-load_dotenv()  # 从 .env 文件加载环境变量
 
 # ============ 创建路由器 ============
 router = APIRouter()
