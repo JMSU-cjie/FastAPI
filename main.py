@@ -1,6 +1,6 @@
 """
 main.py - 应用主入口
-只负责：路由管理、静态文件挂载、应用配置
+负责：路由管理、静态文件挂载、应用配置
 """
 
 from fastapi import FastAPI
@@ -8,6 +8,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 from pathlib import Path
+
+# ============ 导入业务路由 ============
+from baw.goods import router as goods_router
 
 # ============ 创建应用 ============
 app = FastAPI(
@@ -24,6 +27,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ============ 注册业务路由 ============
+app.include_router(goods_router)
 
 # ============ 挂载静态文件 ============
 STATIC_DIR = Path(__file__).parent / "static"
@@ -50,11 +56,6 @@ async def login_page():
     """登录页面"""
     return RedirectResponse(url="/static/login.html")
 
-@app.get("/index")
-async def index_page():
-    """首页"""
-    return RedirectResponse(url="/static/index.html")
-
 @app.get("/goods")
 async def goods_page():
     """商品管理页面"""
@@ -76,10 +77,16 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
     
+    # 初始化数据库（在 goods.py 中导入并调用）
+    from baw.goods import init_database
+    init_database()
+    
     print("=" * 50)
     print("🍜 点餐系统启动中...")
     print(f"📁 静态文件目录: {STATIC_DIR}")
     print(f"🌐 访问地址: http://localhost:8080")
+    print("📝 测试账号: admin / 123456")
+    print("📝 测试账号: user / 123456")
     print("=" * 50)
     
     uvicorn.run(
